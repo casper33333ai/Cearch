@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Speech to Search</h1>
+    <p>Click the button and say something to search on Google.</p>
+    <button id="startButton">Start Speech Recognition</button>
+    <p id="result"></p>
+
+    <script>
+        function startSpeechRecognition() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.start();
+
+            recognition.onresult = (event) => {
+                const spokenText = event.results[0][0].transcript;
+                document.getElementById("result").innerText = `You said: "${spokenText}"`;
+                searchGoogle(spokenText);
+            };
+
+            recognition.onerror = (err) => {
+                console.error("Speech recognition error:", err);
+            };
+        }
+
+        function searchGoogle(query) {
+            const searchURL = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            window.open(searchURL, '_blank');
+        }
+
+        document.getElementById("startButton").addEventListener("click", startSpeechRecognition);
+    </script>
+</body>
+</html>
